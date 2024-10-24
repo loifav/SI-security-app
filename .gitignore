@@ -1,0 +1,22 @@
+# Backend (Python specific)
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/*.db
+backend/*.sqlite3
+backend/venv/
+backend/env/
+backend/.env
+backend/instance/
+backend/*.log
+
+# Frontend (React specific)
+frontend/node_modules/
+frontend/build/
+
+# Miscellaneous
+*.DS_Store
+*.egg-info/
+dist/
+build/
