@@ -9,27 +9,23 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import logging
 
-# Load environment variables from .env file
 load_dotenv()
 
 app = Flask(__name__)
 
-# Enable CORS
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key')
 app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('WTF_CSRF_SECRET_KEY', 'default_wtf_secret_key')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///users.db')
-app.config['SESSION_COOKIE_HTTPONLY'] = True  # Helps mitigate XSS
-app.config['SESSION_COOKIE_SECURE'] = False    # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True 
+app.config['SESSION_COOKIE_SECURE'] = False  
 
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
 
-# Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Dictionary to track login attempts
 login_attempts = defaultdict(lambda: {'attempts': 0, 'first_attempt': None})
 
 class User(db.Model):
@@ -39,15 +35,15 @@ class User(db.Model):
 
 @app.route('/api/get_csrf_token', methods=['GET'])
 def get_csrf_token():
-    csrf_token = generate_csrf()  # Generate CSRF token directly
-    logging.debug(f"CSRF Token generated: {csrf_token}")  # Log the CSRF token
-    return jsonify({'csrf_token': csrf_token})  # Return CSRF token in JSON
+    csrf_token = generate_csrf() 
+    logging.debug(f"CSRF Token generated: {csrf_token}") 
+    return jsonify({'csrf_token': csrf_token}) 
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    logging.debug(f"Received headers: {request.headers}")  # Log all received headers
-    csrf_token = request.headers.get('X-CSRF-Token')  # Changed header name here
-    logging.debug(f"CSRF Token from header: {csrf_token}")  # Log CSRF token from headers
+    logging.debug(f"Received headers: {request.headers}") 
+    csrf_token = request.headers.get('X-CSRF-Token') 
+    logging.debug(f"CSRF Token from header: {csrf_token}")
 
     if not csrf_token:
         logging.warning("CSRF token is missing.")
@@ -57,10 +53,8 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    # Log received credentials (Be careful about logging sensitive information in production!)
     logging.debug(f"Received credentials: Username: {username}, Password: {'*' * len(password)}")
 
-    # Check login attempts
     attempts_info = login_attempts[username]
     current_time = time.time()
 
@@ -71,14 +65,12 @@ def login():
 
     user = User.query.filter_by(username=username).first()
 
-    # Authentication
     if user and check_password_hash(user.password, password):
         login_attempts[username] = {'attempts': 0, 'first_attempt': None}
         logging.info(f"User {username} logged in successfully.")
-        session['user_id'] = user.id  # Store user id in session
+        session['user_id'] = user.id 
         return jsonify({'msg': 'Login successful!'}), 200
 
-    # Increment the login attempt counter
     if attempts_info['first_attempt'] is None:
         attempts_info['first_attempt'] = current_time
     attempts_info['attempts'] += 1
