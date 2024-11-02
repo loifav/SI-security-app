@@ -1,30 +1,28 @@
 // ProtectedRoute.tsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import axios from "axios";
+import { useAuth } from "./AuthContext";
 
-const ProtectedRoute: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+interface ProtectedRouteProps {
+  children?: React.ReactNode;
+}
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/check_logged_in",
-          { withCredentials: true }
-        );
-        setIsLoggedIn(response.data.logged_in);
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-        setIsLoggedIn(false);
-      }
-    };
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { isLoggedIn } = useAuth();
 
-    checkAuth();
-  }, []);
+  if (isLoggedIn === null) {
+    return <div>Loading...</div>;
+  }
 
-  if (isLoggedIn === null) return <div>Loading...</div>;
-  return isLoggedIn ? <Outlet /> : <Navigate to="/" />;
+  return isLoggedIn ? (
+    children ? (
+      <>{children}</>
+    ) : (
+      <Outlet />
+    )
+  ) : (
+    <Navigate to="/" />
+  );
 };
 
 export default ProtectedRoute;

@@ -1,10 +1,9 @@
-// Protected.tsx
 import React from "react";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Protected: React.FC = () => {
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, username, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -21,6 +20,7 @@ const Protected: React.FC = () => {
       <h2>Protected Page</h2>
       {isLoggedIn ? (
         <>
+          <p>Welcome, {username}!</p>
           <p>You have access to this protected content.</p>
           <button onClick={handleLogout}>Logout</button>
         </>

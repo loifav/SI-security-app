@@ -14,6 +14,7 @@ const Login: React.FC = () => {
       await login(username, password);
       navigate("/protected");
     } catch (err) {
+      setError("Login failed. Please check your credentials.");
       console.error("Login error:", err);
     }
   };
