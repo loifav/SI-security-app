@@ -28,6 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const initializeAuth = async () => {
       setLoading(true);
       try {
+        // Fetch CSRF token
         const csrfResponse = await axios.get(
           "http://localhost:5000/api/get_csrf_token",
           {
@@ -35,14 +36,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         );
         setCsrfToken(csrfResponse.data.csrf_token);
+        console.log("CSRF Token:", csrfResponse.data.csrf_token);
 
+        // Check if user is logged in
         const authResponse = await axios.get(
           "http://localhost:5000/api/check_logged_in",
           {
             withCredentials: true,
           }
         );
-
+        console.log("Auth Check Response:", authResponse.data);
         setIsLoggedIn(authResponse.data.logged_in);
 
         if (authResponse.data.logged_in) {
@@ -53,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             }
           );
           setUsername(userResponse.data.username);
+          console.log("Logged in User:", userResponse.data.username);
         }
       } catch (err) {
         console.error("Error initializing auth:", err);
@@ -77,6 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               withCredentials: true,
             }
           );
+          console.log("Session Check Response:", response.data);
           if (!response.data.logged_in) {
             setIsLoggedIn(false);
             setUsername(null);
@@ -109,6 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       );
 
+      console.log("Login Response:", response.data);
       if (response.status === 200) {
         setIsLoggedIn(true);
         setUsername(username);
@@ -137,6 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       );
 
+      console.log("Logout Response:", response.data);
       if (response.status === 200) {
         setIsLoggedIn(false);
         setUsername(null);
