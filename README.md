@@ -86,10 +86,6 @@ Les composants frontend interagissent avec le backend via des requêtes HTTP en 
 
 Les erreurs de connexion ou de récupération de données sont gérées et affichées à l'utilisateur pour une meilleure expérience.
 
-### Graphique des Interactions
-
-<img src="file:///C:/Users/favre/AppData/Roaming/marktext/images/2024-11-02-18-10-39-image.png" title="" alt="" width="754">
-
 ## Conclusion
 
 Cette application fournit un système d'authentification simple mais efficace, utilisant des pratiques de sécurité modernes. Des améliorations futures pourraient inclure une interface utilisateur plus riche, une meilleure gestion des erreurs et des fonctionnalités supplémentaires comme la réinitialisation des mots de passe.
